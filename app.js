@@ -1,50 +1,21 @@
-const http = require("http");
-const { readFileSync } = require("fs");
+const express = require("express");
+const path = require('path');
 
-const homePage = readFileSync("./index.html");
-const homeStyles = readFileSync("./styles.css");
-const homeLogo = readFileSync("./logo.svg");
-const homeLogic = readFileSync("./index.html");
+const app = express();
 
-const server = http.createServer((req, res) => {
-  // console.log(req.url)
-  const url = req.url;
-  //home page
-  if (url === "/") {
-    res.writeHead(200, { "content-type": "text/html" });
-    res.write(homePage);
-    res.end();
-  }
-  //about page
-  else if (url === "/about") {
-    res.writeHead(200, { "content-type": "text/html" });
-    res.write("<h1>About Page</h1>");
-    res.end();
-  }
-  //style page
-  else if (url === "/styles.css") {
-    res.writeHead(200, { "content-type": "text/css" });
-    res.write(homeStyles);
-    res.end();
-  }
-  //logo
-  else if (url === "/logo.svg") {
-    res.writeHead(200, { "content-type": "image/svg+xml" });
-    res.write(homeLogo);
-    res.end();
-  }
-  //logic
-  else if (url === "/browser-app.js") {
-    res.writeHead(200, { "content-type": "text/javascript" });
-    res.write(homeLogic);
-    res.end();
-  }
-  //404
-  else {
-    res.writeHead(404, { "content-type": "text/html" });
-    res.write("<h1>PAGE NOT FOUND</h1>");
-    res.end();
-  }
+// setup static and middleware (links everything within public folder)
+app.use(express.static('./public'))
+
+// One menthod of sendFile to display indexhtml other than dumping it in public folder
+// app.get("/", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, './index.html'))
+// });
+
+//will return 404 status as well as message through chaining
+app.all("*", (req, res) => {
+  res.status(404).send("<h1>ReSoUrCe NoT fOuNd</h1>");
 });
 
-server.listen(5000);
+app.listen(5000, () => {
+  console.log("Server listening on port 5000");
+});
